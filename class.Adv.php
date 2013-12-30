@@ -76,6 +76,8 @@ class Adv {
 		$i = count($temp);
 		$temp = $temp[$i-1];
 		$temp = explode('.', $temp);
+        //OAS problem with characters in creative name - change all , to .
+        str_replace(',', '.', $temp[0]);
 		return ($temp[0]);
 	}
     
@@ -135,9 +137,31 @@ class Adv {
     * 
     *
     */
+    protected function getTemplate($type) {
+        
+    }
+    
+    /**
+    * 
+    *
+    */
+    public function multipleAdvs() {
+        if(is_array($this->_type)) {
+           return 1;
+        }
+        else {
+           return 0;
+        }
+    }
+    
+    /**
+    * 
+    *
+    */
     public function showAll() {
         echo '<pre>';
 		var_dump(get_object_vars($this));
+        $this->getTemplate();
         echo '</pre>';
 	}
 }

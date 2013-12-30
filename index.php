@@ -24,6 +24,10 @@ include('namespace.php');
 
 $adv = new Adv('http://vda.wp.pl/RM/Box/2013-12/_mc/bonprix-59908/2013-12-19/316x111_(do15kb).jpg', 'http://www.wp.pl');
 $adv->showAll();
+if($adv->multipleAdvs()) 
+    echo 'many types';
+else 
+    echo 'single adv';
 ?>
     
     </div>
