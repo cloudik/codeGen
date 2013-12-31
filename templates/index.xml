@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ads>
+	<type name="static">
+		<adv name="minibillboard-gorny" type="018" dir="szablon-minibill.html" />
+		<adv name="minibillboard-dolny" type="004" dir="szablon-minibill-dolny.html" />
+		<adv name="minibox-lewy" type="011" dir="szablon-lewy.html" />
+		<adv name="minibox-prawy" type="012" dir="szablon-prawy.html" />
+		<adv name="generic" dir="static.html" />
+		<adv />
+	</type>
+	<type name="swf">
+		<adv name="billboard" type="003" dir="billboard.html" />
+		<adv name="srodtekst" type="005" dir="srodtekst.html" />
+		<adv name="megabox" type="034" dir="megabox.html" />
+		<adv name="megasky" type="037" dir="megasky.html" />
+	</type>
+</ads>

@@ -22,6 +22,23 @@ class Adv {
 	protected $_extension;
     
     
+	public function debug($i) {
+		echo '<pre>';
+		print_r($i);
+		echo '</pre>';
+	}
+	
+	public function debugxml() {
+		$file = 'templates/index.xml';
+		if (file_exists($file)) {
+			$xml = simplexml_load_file($file);
+			$this->debug($xml);
+		} 
+		else {
+			exit('Failed to open '.$file);
+		}
+	}
+	
     /**
     * 
     *
@@ -122,6 +139,7 @@ class Adv {
 				case 646:
 					$type[0] = '013';
                     $type[1] = '015';
+					$type[2] = '015';
 					break;
 				default:
 					$type[] = '003';
@@ -137,20 +155,23 @@ class Adv {
     * 
     *
     */
-    protected function getTemplate($type) {
-        
+    protected function getTemplate($type, $extension) {
+        $this->debug($type);
+		$this->debug($extension);
     }
     
     /**
-    * 
+    * function multipleAdvs function returns true if this type of creative can have more than one placement on the website
     *
+	* @param none
+	* @return bool
     */
     public function multipleAdvs() {
         if(is_array($this->_type)) {
-           return 1;
+           return true;
         }
         else {
-           return 0;
+           return false;
         }
     }
     
@@ -161,7 +182,7 @@ class Adv {
     public function showAll() {
         echo '<pre>';
 		var_dump(get_object_vars($this));
-        $this->getTemplate();
+        $this->getTemplate($this->_type, $this->_extension);
         echo '</pre>';
 	}
 }
