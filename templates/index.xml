@@ -1,17 +1,52 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ads>
-	<type name="static">
-		<adv name="minibillboard-gorny" type="018" dir="szablon-minibill.html" />
-		<adv name="minibillboard-dolny" type="004" dir="szablon-minibill-dolny.html" />
-		<adv name="minibox-lewy" type="011" dir="szablon-lewy.html" />
-		<adv name="minibox-prawy" type="012" dir="szablon-prawy.html" />
-		<adv name="generic" dir="static.html" />
-		<adv />
-	</type>
-	<type name="swf">
-		<adv name="billboard" type="003" dir="billboard.html" />
-		<adv name="srodtekst" type="005" dir="srodtekst.html" />
-		<adv name="megabox" type="034" dir="megabox.html" />
-		<adv name="megasky" type="037" dir="megasky.html" />
-	</type>
+	<static>
+		<adv>
+			<name>minibillboard-gorny</name>
+			<type>018</type>
+			<dir>szablon-minibill.html</dir>
+		</adv>	
+		<adv>
+			<name>minibillboard-dolny</name>
+			<type>004</type>
+			<dir>szablon-minibill-dolny.html</dir>
+		</adv>
+		<adv>
+			<name>minibox-lewy</name>
+			<type>011</type>
+			<dir>szablon-lewy.html</dir>
+		</adv>
+		<adv>
+			<name>minibox-prawy</name>
+			<type>018</type>
+			<dir>szablon-prawy.html</dir>
+		</adv>
+		<adv>
+			<name>generic</name>
+			<type></type>
+			<dir>static.html</dir>
+		</adv>
+	</static>
+	<swf>
+		<adv>
+			<name>billboard</name>
+			<type>003</type>
+			<dir>billboard.html</dir>
+		</adv>
+		<adv>
+			<name>srodtekst</name>
+			<type>005</type>
+			<dir>srodtekst.html</dir>
+		</adv>
+		<adv>
+			<name>megabox</name>
+			<type>034</type>
+			<dir>megabox.html</dir>
+		</adv>
+		<adv>
+			<name>megasky</name>
+			<type>037</type>
+			<dir>megasky.html</dir>
+		</adv>
+	</swf>
 </ads>
