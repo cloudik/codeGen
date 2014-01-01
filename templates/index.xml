@@ -3,50 +3,225 @@
 	<static>
 		<adv>
 			<name>minibillboard-gorny</name>
-			<type>018</type>
+			<types>
+				<type>018</type>
+			</types>	
 			<dir>szablon-minibill.html</dir>
+			<sizes>
+				<size>
+					<width>316</width>
+					<height>111</height>
+				</size>
+			</sizes>
 		</adv>	
 		<adv>
 			<name>minibillboard-dolny</name>
-			<type>004</type>
+			<types>
+				<type>004</type>
+			</types>
 			<dir>szablon-minibill-dolny.html</dir>
+			<sizes>
+				<size>
+					<width>316</width>
+					<height>111</height>
+				</size>
+			</sizes>	
 		</adv>
 		<adv>
 			<name>minibox-lewy</name>
-			<type>011</type>
+			<types>
+				<type>011</type>
+			</types>
 			<dir>szablon-lewy.html</dir>
+			<sizes>
+				<size>
+					<width>152</width>
+					<height>152</height>
+				</size>
+			</sizes>	
 		</adv>
 		<adv>
 			<name>minibox-prawy</name>
-			<type>018</type>
+			<types>
+				<type>018</type>
+			</types>
 			<dir>szablon-prawy.html</dir>
+			<sizes>
+				<size>
+					<width>152</width>
+					<height>152</height>
+				</size>
+			</sizes>	
+		</adv>
+		<adv>
+			<name>billboard</name>
+			<types>
+				<type>003</type>
+			</types>
+			<dir>static.html</dir>
+			<sizes>
+				<size>
+					<width>750</width>
+					<height>100</height>
+				</size>
+				<size>
+					<width>750</width>
+					<height>200</height>
+				</size>
+				<size>
+					<width>750</width>
+					<height>300</height>
+				</size>
+				<size>
+					<width>970</width>
+					<height>300</height>
+				</size>
+			</sizes>
+		</adv>
+		<adv>
+			<name>srodtekst</name>
+			<types>
+				<type>005</type>
+			</types>
+			<dir>static.html</dir>
+			<sizes>
+				<size>
+					<width>300</width>
+					<height>250</height>
+				</size>
+				<size>
+					<width>420</width>
+					<height>250</height>
+				</size>
+				<size>
+					<width>450</width>
+					<height>250</height>
+				</size>
+			</sizes>	
+		</adv>
+		<adv>
+			<name>megabox</name>
+			<types>
+				<type>034</type>
+			</types>
+			<dir>static.html</dir>
+			<sizes>
+				<size>
+					<width>300</width>
+					<height>150</height>
+				</size>
+				<size>
+					<width>300</width>
+					<height>250</height>
+				</size>
+			</sizes>
+		</adv>
+		<adv>
+			<name>megasky</name>
+			<types>
+				<type>037</type>
+			</types>
+			<dir>static.html</dir>
+			<sizes>
+				<size>
+					<width>300</width>
+					<height>600</height>
+				</size>
+			</sizes>
 		</adv>
 		<adv>
 			<name>generic</name>
-			<type></type>
+			<types>
+				<type>003</type>
+				<type>005</type>
+				<type>007</type>
+				<type>013</type>
+				<type>015</type>
+				<type>034</type>
+				<type>037</type>
+			</types>
 			<dir>static.html</dir>
+			<sizes>
+				<size></size>
+			</sizes>
 		</adv>
 	</static>
 	<swf>
 		<adv>
 			<name>billboard</name>
-			<type>003</type>
+			<types>
+				<type>003</type>
+			</types>
 			<dir>billboard.html</dir>
+			<sizes>
+				<size>
+					<width>750</width>
+					<height>100</height>
+				</size>
+				<size>
+					<width>750</width>
+					<height>200</height>
+				</size>
+				<size>
+					<width>750</width>
+					<height>300</height>
+				</size>
+				<size>
+					<width>970</width>
+					<height>300</height>
+				</size>
+			</sizes>
 		</adv>
 		<adv>
 			<name>srodtekst</name>
-			<type>005</type>
+			<types>
+				<type>005</type>
+			</types>
 			<dir>srodtekst.html</dir>
+			<sizes>
+				<size>
+					<width>300</width>
+					<height>250</height>
+				</size>
+				<size>
+					<width>420</width>
+					<height>250</height>
+				</size>
+				<size>
+					<width>450</width>
+					<height>250</height>
+				</size>
+			</sizes>	
 		</adv>
 		<adv>
 			<name>megabox</name>
-			<type>034</type>
+			<types>
+				<type>034</type>
+			</types>
 			<dir>megabox.html</dir>
+			<sizes>
+				<size>
+					<width>300</width>
+					<height>150</height>
+				</size>
+				<size>
+					<width>300</width>
+					<height>250</height>
+				</size>
+			</sizes>
 		</adv>
 		<adv>
 			<name>megasky</name>
-			<type>037</type>
+			<types>
+				<type>037</type>
+			</types>
 			<dir>megasky.html</dir>
+			<sizes>
+				<size>
+					<width>300</width>
+					<height>600</height>
+				</size>
+			</sizes>
 		</adv>
 	</swf>
 </ads>

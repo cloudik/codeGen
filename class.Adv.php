@@ -15,12 +15,13 @@ class Adv {
     protected $_name;
 	protected $_file;
 	protected $_url;
-	protected $_type = 0;
-	//protected $_txt; will be used for txt advs in extended class
+	protected $_id;
 	protected $_width;
 	protected $_height;
 	protected $_extension;
+    protected $_code;
     
+    protected $_templateDir = 'templates';
     
 	public function debug($i) {
 		echo '<pre>';
@@ -28,22 +29,12 @@ class Adv {
 		echo '</pre>';
 	}
 	
-	public function debugxml() {
-		$file = 'templates/index.xml';
-		if (file_exists($file)) {
-			$xml = simplexml_load_file($file);
-			$this->debug($xml);
-		} 
-		else {
-			exit('Failed to open '.$file);
-		}
-	}
 	
     /**
     * 
     *
     */
-    public function __construct($file, $url, $type = -1) {
+    public function __construct($file, $url) {
 		$this->_file = $file;
 		$this->_url = $url;
 		
@@ -51,16 +42,13 @@ class Adv {
 		$this->_width = $temp[0];
 		$this->_height = $temp[1];
 		
-		$this->_name = $this->getName();
+		$this->_name = $this->setName();
 		
 		$this->_extension = $this->getExtension();
 		
-		if ($type > 0) {
-			$this->_type = $type;
-		}
-		else {
-			$this->_type = $this->getType();
-		}	
+		$this->_id = rand();
+        
+        $this->_code = $this->generateCode();
 	}
     
     /**
@@ -88,7 +76,7 @@ class Adv {
     * 
     *
     */
-	protected function getName() {
+	protected function setName() {
 		$temp = explode('/', $this->_file);
 		$i = count($temp);
 		$temp = $temp[$i-1];
@@ -99,7 +87,40 @@ class Adv {
 	}
     
     protected function setType($type) {
-        $this->_type = $type;
+        //$this->_type = $type;
+        $xmlData = $this->getTypeXML();
+        $countElements = count($xmlData);
+       
+        if($countElements) {
+            $this->_type = $xmlData->name;
+        }
+    }
+    
+    protected function getTypeXML() {
+
+        $directory = $this->_templateDir;
+        $file = $directory.'/alt.xml';
+
+		if (file_exists($file)) {
+			$xml = simplexml_load_file($file);
+		} 
+		else {
+			exit('Failed to open '.$file);
+		}
+ 
+        $widthAdv = $this->_width;
+        $heightAdv = $this->_height;
+        
+        foreach ($xml->adv as $adv) {
+            foreach($adv->sizes->size as $size) {
+                if(($size->width == $widthAdv) && ($size->height == $heightAdv)) {
+                   $result[] = $adv;
+                }
+            }
+        }
+        
+        //$this->debug($result);
+        return $result;
     }
     
      /**
@@ -167,12 +188,78 @@ class Adv {
 	* @return bool
     */
     public function multipleAdvs() {
-        if(is_array($this->_type)) {
+        $total = count($this->_code);
+        return $total;
+        /*
+        if($total > 1) {
            return true;
         }
         else {
            return false;
         }
+        */
+    }
+    
+    public function getName() {
+        return $this->_name;
+    }
+    
+    public function getID() {
+        return $this->_id;
+    }
+    
+    public function getCode () {
+        return $this->_code;
+        /*
+        
+        if($multiAdv) {
+            
+        }
+        */
+    }
+    
+    protected function generateCode() {
+        $xmlData = $this->getTypeXML();
+        $countElements = count($xmlData);
+       
+        if($countElements) {
+            $i = 0;
+            foreach($xmlData as $data) {
+                
+                $static_arr = array('jpg', 'gif', 'png');
+                if(in_array(strtolower($this->_extension), $static_arr)) {
+                    $file = $data->static;
+                }
+                else {
+                    $file = $data->swf;
+                }
+
+                $type = $data->types->type;
+              
+                $filename = $this->_templateDir.'/'.$file;
+            
+                @$handle = fopen($filename, 'r');
+		        @$contents = fread($handle, filesize($filename));
+		        @fclose($handle);
+		
+		        $contents = str_replace('{ADVID}', $type, $contents);
+		        $contents = str_replace('{FILE}', $this->_file, $contents);
+		        $contents = str_replace('{URL}', $this->_url, $contents);
+		        $contents = str_replace('{WIDTH}', $this->_width, $contents);
+		        $contents = str_replace('{HEIGHT}', $this->_height, $contents);
+                
+                //$result[$i]['name'] = $this->_name;
+		        $result[$i]['code'] = $contents;
+	
+		        $i++;
+            }
+       }
+        else {
+            $result = 'Nie znaleziono szablonu';
+        }
+        //$this->debug($xmlData);
+        return $result;
+     
     }
     
     /**
@@ -182,7 +269,8 @@ class Adv {
     public function showAll() {
         echo '<pre>';
 		var_dump(get_object_vars($this));
-        $this->getTemplate($this->_type, $this->_extension);
+        //$this->getTemplate($this->_type, $this->_extension);
+        $this->getTypeXML();
         echo '</pre>';
 	}
 }
