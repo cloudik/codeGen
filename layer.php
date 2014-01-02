@@ -47,8 +47,8 @@
             </div>
              <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                  <li class="active"><a href="index.php">Flat</a></li>
-                  <li><a href="layer.php">Layer</a></li>
+                  <li><a href="index.php">Flat</a></li>
+                  <li class="active"><a href="layer.php">Layer</a></li>
                   <li><a href="#">Instream</a></li>
 				  <li><a href="#">Links SG WP</a></li>
                   <li><a href="#">Cookie</a></li>
@@ -116,6 +116,7 @@ if(!empty($adv)) {
                         <div class="form-group">
                             <label for="creativesInput">Creatives:</label>
                             <textarea class="form-control" name="creativesInput" id="creativesInput" placeholder="Enter URLs of the creatives"><?php if(!empty($images)) echo $images;?></textarea>
+							 <p class="help-block">Each line will be treated as a separate creative unless <code>&lt;layer&gt;</code> separator is used.</p>
                         </div>
                         <div class="form-group">
                             <label for="urlsInput">URLs:</label>

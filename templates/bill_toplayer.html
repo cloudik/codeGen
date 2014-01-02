@@ -1,0 +1,78 @@
+<div style="display:none"><img alt="" width="1" height="1" border="0" src="%%SERVER%%/RM/ads/adstream_lx.ads/%%PAGE%%/%%RAND%%/%%POS%%/%%CAMP%%/%%IMAGE%%/%%USER%%?_RM_EMPTY_" /><!--!+!+!{ADVID}--></div>
+<script language="javascript" type="text/javascript">
+//bill
+
+PWAbill=new Array();
+PWAbill["src"]="{FILE}";
+PWAbill["msrc"]="{IMG}";
+PWAbill["url"]="http://adv.wp.pl/RM/click_lx.ads/%%PAGE%%/%%RAND%%/%%POS%%/%%CAMP%%/%%IMAGE%%/%%USER%%?_RM_REDIR_={URL}";
+PWAbill["width"]={WIDTH};
+PWAbill["height"]={HEIGHT};
+PWAbill["click"]="click";
+PWAbill["flashvars"]="";
+PWAbill["base"]="";
+PWAbill["bgcolor"]="#ffffff";
+PWAbill["wmode"]="opaque";
+PWAbill["display"]=true;
+
+
+//konfiguracja standardowa
+PWAtop=new Array();
+PWAtop["src"]="{FILE2}";
+PWAtop["msrc"]="{IMG2}";
+PWAtop["url"]="http://adv.wp.pl/RM/click_lx.ads/%%PAGE%%/%%RAND%%/%%POS%%/%%CAMP%%/%%IMAGE%%/%%USER%%?_RM_REDIR_={URL2}";
+PWAtop["width"]={WIDTH2};
+PWAtop["height"]={HEIGHT2};
+PWAtop["left"]=400;
+PWAtop["top"]=0;
+PWAtop["click"]="click";
+PWAtop["flashvars"]="";
+PWAtop["base"]="";
+PWAtop["bgcolor"]="#ffffff";
+PWAtop["wmode"]="transparent";
+PWAtop["zindex"]=1009;
+
+//dodatkowe opcje
+PWAtop["poziom"]=true;
+PWAtop["pion"]=true;
+PWAtop["fullscreen"]=false;
+PWAtop["ffpatch"]=false;
+PWAtop["x"]=false;
+PWAtop["xoffset"]=0;
+PWAtop["scroll"]=false;
+PWAtop["drag"]=false;
+PWAtop["mheight"]=20;
+PWAtop["noclose"]=false;
+PWA_hidescroll=true;
+
+//funkcje
+function tl_prestart(){
+}
+
+
+function tl_onstart(){
+ if (document.getElementById("WP-cookie-info")) setInterval("tl_poz()",200);
+
+}
+
+function tl_onstop(){
+//document.getElementById("bill_bio").style.display="block";
+}
+
+function tl_onmin(){
+}
+
+function tl_onmax(){
+}
+
+function tl_poz(){
+  var komunikat=document.getElementById("WP-cookie-info"); 
+  if ((komunikat!=null)&&(komunikat.style.display="block")) top_div.style.top=PWAtop["top"]+50+"px"; else top_div.style.top=PWAtop["top"]+"px"; 
+}
+
+
+
+</script>
+<script language="javascript" type="text/javascript" src="http://adv.wp.pl/RM/Box/2011-05/_wb/szablony/default.js"></script>
+<script language="javascript" type="text/javascript" src="http://adv.wp.pl/RM/Box/2010-10/_wb/szablony/billboard.js"></script>
+<script language="javascript" type="text/javascript" src="http://adv.wp.pl/RM/Box/2012-03/_wb/szablony/toplayer.js"></script>

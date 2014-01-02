@@ -8,8 +8,13 @@ class Adv {
     * @param string $_name - name of creative (to paste into field 'Creative name' in OAS
 	* @param string $_file - directory for the image
 	* @param string $_url - url for Landing Page
-	* @param string $_type - type of the creative (boksEC, boksECL, boksECP or txtEC)
-	* @param string $_txt - non obligatory; stores text of the link advertisment
+	* @param int $_id - random id of object (for jQuery purposes in view page)
+	* @param int $_width - width of creative
+	* @param int $_height - height of creative
+	* @param string $_extension - extension of the file
+	* @param string $_code - HTML code(s) generated for specific type of creative
+	* @param string $_type - type of the creative (number of emission code in OAS)
+	* @param string $_templateDir - templates and XML directory
 	*
     */
     protected $_name;
@@ -35,20 +40,23 @@ class Adv {
     *
     */
     public function __construct($file, $url) {
-		$this->_file = $file;
-		$this->_url = $url;
-		
-		$temp = $this->getDetails();
-		$this->_width = $temp[0];
-		$this->_height = $temp[1];
-		
-		$this->_name = $this->setName();
-		
-		$this->_extension = $this->getExtension();
-		
-		$this->_id = rand();
-        $this->_type = $this->setType();
-        $this->_code = $this->generateCode();
+		try {
+			$this->_file = $file;
+			$this->_url = $this->validate($url, 'url');
+			$temp = $this->getDetails();
+			$this->_width = $temp[0];
+			$this->_height = $temp[1];
+			$this->_name = $this->setName();
+			$this->_extension = $this->getExtension();
+			$this->_id = rand();
+			$this->_type = $this->setType();
+			$this->_code = $this->generateCode();
+		}
+		catch(Exception $e) {
+			echo '<div class="alert alert-danger">';
+			echo '<strong>Wystąpił błąd:</strong> ',  $e->getMessage(), "\n";
+			echo '</div>';
+		}
 	}
     
     /**
@@ -56,8 +64,13 @@ class Adv {
     *
     */
     protected function getDetails() {
-		$temp = getimagesize($this->_file);
-		return $temp;
+		if (@$temp = getimagesize($this->_file)) {
+			return $temp;
+		} else {
+			throw new Exception($this->_file." nie istnieje."); 
+		}
+		//$temp = getimagesize($this->_file);
+		//return $temp;
 	}
     
     /**
@@ -86,8 +99,11 @@ class Adv {
 		return ($temp[0]);
 	}
     
+	/**
+    * 
+    *
+    */
     protected function setType() {
-        //$this->_type = $type;
         $xmlData = $this->getTypeXML();
         $countElements = count($xmlData);
        
@@ -102,6 +118,10 @@ class Adv {
 		return $result;
     }
     
+	/**
+    * 
+    *
+    */
     protected function getTypeXML() {
 
         $directory = $this->_templateDir;
@@ -124,19 +144,8 @@ class Adv {
                 }
             }
         }
-        
-        //$this->debug($result);
-        return $result;
-    }
-    
 
-    /**
-    * 
-    *
-    */
-    protected function getTemplate($type, $extension) {
-        $this->debug($type);
-		$this->debug($extension);
+        return $result;
     }
     
     /**
@@ -148,32 +157,44 @@ class Adv {
     public function multipleAdvs() {
         $total = count($this->_code);
         return $total;
-        /*
-        if($total > 1) {
-           return true;
-        }
-        else {
-           return false;
-        }
-        */
     }
     
+	/**
+    * 
+    *
+    */
     public function getName() {
         return $this->_name;
     }
     
+	/**
+    * 
+    *
+    */
     public function getID() {
         return $this->_id;
     }
     
+	/**
+    * 
+    *
+    */
     public function getCode () {
         return $this->_code;
     }
 	
+	/**
+    * 
+    *
+    */
 	public function getType () {
         return $this->_type;
     }
     
+	/**
+    * 
+    *
+    */
     protected function generateCode() {
         $xmlData = $this->getTypeXML();
         $countElements = count($xmlData);
@@ -221,12 +242,40 @@ class Adv {
     * 
     *
     */
-    public function showAll() {
-        echo '<pre>';
-		var_dump(get_object_vars($this));
-        //$this->getTemplate($this->_type, $this->_extension);
-        $this->getTypeXML();
-        echo '</pre>';
+	protected function validate($data, $tag) {
+		switch($tag) {
+			case 'url':
+				$result = $this->validateURL($data);
+				break;
+			default:
+				$result = NULL;
+		}
+		return $result;
 	}
+	
+	/**
+    * 
+    *
+    */
+	protected function validateURL($url) {
+		if (strpos($url, 'http') !== 0) {
+			$url = 'http://'.$url;
+		}
+
+		$regex = "((https?|ftp)\:\/\/)?"; // SCHEME
+		$regex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?"; // User and Pass
+		$regex .= "([a-z0-9-.]*)\.([a-z]{2,3})"; // Host or IP
+		$regex .= "(\:[0-9]{2,5})?"; // Port
+		$regex .= "(\/([a-z0-9+\$_-]\.?)+)*\/?"; // Path
+		$regex .= "(\?[a-z+&\$_.-][a-z0-9;:@&%=+\/\$_.-]*)?"; // GET Query
+		$regex .= "(#[a-z_.-][a-z0-9+\$_.-]*)?"; // Anchor 
+		
+		if(preg_match("/^$regex$/", $url)) {
+			return $url;
+		} 
+		else
+			return NULL;
+	}
+
 }
 ?>
