@@ -20,7 +20,7 @@ class Adv {
 	protected $_height;
 	protected $_extension;
     protected $_code;
-    
+    protected $_type;
     protected $_templateDir = 'templates';
     
 	public function debug($i) {
@@ -47,7 +47,7 @@ class Adv {
 		$this->_extension = $this->getExtension();
 		
 		$this->_id = rand();
-        
+        $this->_type = $this->setType();
         $this->_code = $this->generateCode();
 	}
     
@@ -86,20 +86,26 @@ class Adv {
 		return ($temp[0]);
 	}
     
-    protected function setType($type) {
+    protected function setType() {
         //$this->_type = $type;
         $xmlData = $this->getTypeXML();
         $countElements = count($xmlData);
        
         if($countElements) {
-            $this->_type = $xmlData->name;
+			$i = 0;
+			foreach($xmlData as $xml) {
+             $result[$i] = $xml->name;
+			 $i++;
+			} 
         }
+		else $result = NULL;
+		return $result;
     }
     
     protected function getTypeXML() {
 
         $directory = $this->_templateDir;
-        $file = $directory.'/alt.xml';
+        $file = $directory.'/index.xml';
 
 		if (file_exists($file)) {
 			$xml = simplexml_load_file($file);
@@ -123,55 +129,7 @@ class Adv {
         return $result;
     }
     
-     /**
-    * 
-    *
-    */
-    protected function getType() {
-        switch($this->_width) {
-            case 316:
-                $type[0] = '018';
-                $type[1] = '004';
-                break;
-            case ($this->_width == 750 || $this->_width == 970):
-					$type = '003';
-					break;
-            case 300:
-					switch ($this->_height) {
-						case 600:
-						$type = '037';
-						break;
-						case 150:
-						$type = '034';
-						break;
-						case 250:
-						$type[0] = '005';
-						$type[1] = '034';
-						break;
-					}
-					break;
-				case ($this->_width == 450 || $this->_width == 420) :
-					$type = '005';
-					break;
-				case 152:
-					$type[0] = '011';
-					$type[1] = '012';
-					break;
-				case 646:
-					$type[0] = '013';
-                    $type[1] = '015';
-					$type[2] = '015';
-					break;
-				default:
-					$type[] = '003';
-					$type[] = '005';
-					$type[] = '034';
-					$type[] = '037';
-					break;
-        }
-        return $type;
-    }
-    
+
     /**
     * 
     *
@@ -210,12 +168,10 @@ class Adv {
     
     public function getCode () {
         return $this->_code;
-        /*
-        
-        if($multiAdv) {
-            
-        }
-        */
+    }
+	
+	public function getType () {
+        return $this->_type;
     }
     
     protected function generateCode() {
@@ -250,14 +206,13 @@ class Adv {
                 
                 //$result[$i]['name'] = $this->_name;
 		        $result[$i]['code'] = $contents;
-	
 		        $i++;
             }
        }
         else {
             $result = 'Nie znaleziono szablonu';
         }
-        //$this->debug($xmlData);
+       
         return $result;
      
     }

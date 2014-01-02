@@ -20,13 +20,30 @@
   <script>
     $(function() {
         $('textarea').elastic();
+		
+		$('.singleAdv').each(function() {
+			$(this).children('.codetxt').children('.form-group').not(':eq(0)').hide();
+			$(this).children('button').eq(0).removeClass('btn-default');
+			$(this).children('button').eq(0).addClass('btn-primary');
+		});
+		
+		$('button.codebutton').click(function(){
+			var val = $(this).attr('href');
+			$(this).parent('.singleAdv').children('button').removeClass('btn-primary');
+			$(this).parent('.singleAdv').children('button').addClass('btn-default');
+			$(this).removeClass('btn-default');
+			$(this).addClass('btn-primary');
+			val = val.substr(1);
+			$(this).parent('.singleAdv').children('.codetxt').children('.form-group').hide();
+			$('#'+val).show();
+		});
     });
   </script>
     
-        <header class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <header class="navbar navbar-default " role="navigation">
          <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/codeGen/">Code generator</a>
+                <a class="navbar-brand" href="/codeGen/">CodeGen</a>
             </div>
              <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
@@ -123,6 +140,7 @@ if(!empty($adv)) {
         $multiAdv = $adv[$i]->multipleAdvs();
         $name = $adv[$i]->getName();
         $id = $adv[$i]->getID();
+		$type = $adv[$i]->getType();
         echo '
         <div id="'.$id.'" class="singleAdv">
         ';
@@ -132,11 +150,12 @@ if(!empty($adv)) {
                 <input type="text" class="form-control" value="'.$name.'">
             </div>            
         ';
+		
         $multi = $adv[$i]->multipleAdvs();
         if($multi > 1) {
             for ($j = 0; $j < $multi; $j++) {
                 echo '
-                    <button type="button" class="btn btn-default">Code '.($j+1).'</button>
+                    <button type="button" class="btn btn-default codebutton" href="#'.$id.$j.'">'.$type[$j].'</button>
                     ';
            }    
         }
