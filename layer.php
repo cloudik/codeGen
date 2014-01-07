@@ -66,21 +66,40 @@ if(!empty($_POST)) {
 }
 
 if(!empty($_POST)) {
-    $imagesAr = explode("\n", $images);
-    $urlsAr = explode("\n", $urls);
-
+    if(strstr($images, '<layer>')) {
+        $creativeAr = explode('<layer>', $images);
+    }
+    else {
+        $creativeAr = explode("\n", $images);
+    }
+    
+    if(strstr($urls, '<layer>')) {
+        $urlsAr = explode('<layer>', $urls);
+    }
+    else {
+        $urlsAr = explode("\n", $urls);
+    }
     $i = 0;
     
-	foreach($imagesAr as $img) {
-		$img = trim($img);
-		@$temp_url = trim($urlsAr[$i]);
+	foreach($creativeAr as $creative) {
+        $layerAr = explode("\n", $creative);
+        if(is_array($layerAr)) {
+            $j = 0;
+            foreach($layerAr as $layer) {
+                $img[$j] = $layer[$j];
+                
+            }
+        }
+        else {
+		    $img = trim($img);
+		    @$temp_url = trim($urlsAr[$i]);
 		
-		if($temp_url != '') 
-			@$url = $temp_url;
+		    if($temp_url != '') 
+			    @$url = $temp_url;
 		
-		$adv[$i] = new Adv($img, $url);
-        $i++;
-
+		    $adv[$i] = new Layer($img, $url);
+            $i++;
+        }
     }
     
 }
