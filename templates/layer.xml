@@ -9,8 +9,12 @@
 		<swf></swf>
 		<sizes>
 			<size>
-				<width></width>
-				<height></height>
+				<width>750</width>
+				<height>100</height>
+			</size>
+			<size>
+				<width>750</width>
+				<height>200</height>
 			</size>
 		</sizes>
 	</adv>
@@ -23,8 +27,16 @@
 		<swf></swf>
 		<sizes>
 			<size>
-				<width></width>
-				<height></height>
+				<width>750</width>
+				<height>100</height>
+			</size>
+			<size>
+				<width>750</width>
+				<height>200</height>
+			</size>
+			<size>
+				<width>750</width>
+				<height>300</height>
 			</size>
 		</sizes>
 	</adv>
@@ -51,8 +63,16 @@
 		<swf></swf>
 		<sizes>
 			<size>
-				<width></width>
-				<height></height>
+				<width>970</width>
+				<height>300</height>
+			</size>
+			<size>
+				<width>750</width>
+				<height>100</height>
+			</size>
+			<size>
+				<width>750</width>
+				<height>200</height>
 			</size>
 		</sizes>
 	</adv>

@@ -65,6 +65,12 @@ if(!empty($_POST)) {
     @$capping = $_POST['cappingInput'];
 }
 
+function debug($i) {
+	echo '<pre>';
+	print_r($i);
+	echo '</pre>';
+}
+
 if(!empty($_POST)) {
     if(strstr($images, '<layer>')) {
         $creativeAr = explode('<layer>', $images);
@@ -80,14 +86,41 @@ if(!empty($_POST)) {
         $urlsAr = explode("\n", $urls);
     }
     $i = 0;
-    
+	
 	foreach($creativeAr as $creative) {
+		
+		$creative = trim($creative);
+		$urlsAr[$i] = trim($urlsAr[$i]);
+		
+		if(strstr($creative, "\n") !== FALSE)
+			$files = explode("\n", $creative);
+		else
+			$files = $creative;
+			
+		if(strstr($urlsAr[$i], "\n") !== FALSE)
+			$links = explode("\n", $urlsAr[$i]);
+		else
+			$links = $urlsAr[$i];	
+	
+		$adv[$i] = new Layer($files, $links);
+		$i++;
+	/*
         $layerAr = explode("\n", $creative);
         if(is_array($layerAr)) {
             $j = 0;
+			$temp = explode("\n", $urlsAr[$i]);
+			if(is_array($temp)) {
+				foreach($temp as $key => $value) {
+					$temp_url[$j] = $value;
+				}
+			}
+			else {
+				$temp_url = $temp;
+			}
             foreach($layerAr as $layer) {
                 $img[$j] = $layer[$j];
-                
+				$adv[$i] = new Layer($img[$j], $temp_url[$j]);
+                $j++;
             }
         }
         else {
@@ -96,10 +129,11 @@ if(!empty($_POST)) {
 		
 		    if($temp_url != '') 
 			    @$url = $temp_url;
-		
+			
 		    $adv[$i] = new Layer($img, $url);
             $i++;
         }
+	*/	
     }
     
 }
@@ -135,11 +169,12 @@ if(!empty($adv)) {
                         <div class="form-group">
                             <label for="creativesInput">Creatives:</label>
                             <textarea class="form-control" name="creativesInput" id="creativesInput" placeholder="Enter URLs of the creatives"><?php if(!empty($images)) echo $images;?></textarea>
-							 <p class="help-block">Each line will be treated as a separate creative unless <code>&lt;layer&gt;</code> separator is used.</p>
+							<p class="help-block">Each line will be treated as a separate creative unless <code>&lt;layer&gt;</code> separator is used.</p>
                         </div>
                         <div class="form-group">
                             <label for="urlsInput">URLs:</label>
                             <textarea class="form-control" name="urlsInput" id="urlsInput" placeholder="Enter URLs"><?php if(!empty($urls)) echo $urls;?></textarea>
+							<p class="help-block">Also here <code>&lt;layer&gt;</code> separator should be used.</p>
                         </div>
                         <div class="form-group">
                             <label for="cappingInput">OAS capping:</label>

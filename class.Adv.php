@@ -34,6 +34,15 @@ class Adv {
 		echo '</pre>';
 	}
 	
+	public function debugprotected($i) {
+		if($i == 'code')
+			$e = $this->_code;
+		if($i == 'url')
+			$e = $this->_url;
+		echo '<pre>';
+		print_r($e);
+		echo '</pre>';
+	}
 	
     /**
     * 
@@ -43,11 +52,11 @@ class Adv {
 		try {
 			$this->_file = $file;
 			$this->_url = $this->validate($url, 'url');
-			$temp = $this->getDetails();
+			$temp = $this->getDetails($this->_file);
 			$this->_width = $temp[0];
 			$this->_height = $temp[1];
 			$this->_name = $this->setName();
-			$this->_extension = $this->getExtension();
+			$this->_extension = $this->getExtension($this->_file);
 			$this->_id = rand();
 			$this->_type = $this->setType();
 			$this->_code = $this->generateCode();
@@ -63,11 +72,12 @@ class Adv {
     * 
     *
     */
-    protected function getDetails() {
-		if (@$temp = getimagesize($this->_file)) {
+    protected function getDetails($address) {
+		
+		if (@$temp = getimagesize($address)) {
 			return $temp;
 		} else {
-			throw new Exception($this->_file." nie istnieje."); 
+			throw new Exception($address." nie istnieje."); 
 		}
 		//$temp = getimagesize($this->_file);
 		//return $temp;
@@ -77,8 +87,8 @@ class Adv {
     * 
     *
     */
-    protected function getExtension() {
-		$temp = explode('/', $this->_file);
+    protected function getExtension($address) {
+		$temp = explode('/', $address);
 		$i = count($temp);
 		$temp = $temp[$i-1];
 		$temp = explode('.', $temp);
@@ -103,8 +113,13 @@ class Adv {
     * 
     *
     */
-    protected function setType() {
-        $xmlData = $this->getTypeXML();
+    protected function setType($width=NULL, $height=NULL) {
+		if (is_null($width) && is_null($height)) {
+			$xmlData = $this->getTypeXML();
+		}
+		else {
+			$xmlData = $this->getTypeXML($width, $height);
+		}
         $countElements = count($xmlData);
        
         if($countElements) {
@@ -116,35 +131,66 @@ class Adv {
         }
 		else $result = NULL;
 		return $result;
+		
     }
     
 	/**
     * 
     *
     */
-    protected function getTypeXML() {
+    protected function getTypeXML($width=NULL, $height=NULL) {
+		if (is_null($width) && is_null($height)) {
+			$directory = $this->_templateDir;
+			$file = $directory.'/index.xml';
 
-        $directory = $this->_templateDir;
-        $file = $directory.'/index.xml';
-
-		if (file_exists($file)) {
-			$xml = simplexml_load_file($file);
-		} 
-		else {
-			exit('Failed to open '.$file);
+			if (file_exists($file)) {
+				$xml = simplexml_load_file($file);
+			} 
+			else {
+				exit('Failed to open '.$file);
+			}
+	 
+			$widthAdv = $this->_width;
+			$heightAdv = $this->_height;
+			
+			foreach ($xml->adv as $adv) {
+				foreach($adv->sizes->size as $size) {
+					if(($size->width == $widthAdv) && ($size->height == $heightAdv)) {
+					   $result[] = $adv;
+					}
+				}
+			}
 		}
- 
-        $widthAdv = $this->_width;
-        $heightAdv = $this->_height;
-        
-        foreach ($xml->adv as $adv) {
-            foreach($adv->sizes->size as $size) {
-                if(($size->width == $widthAdv) && ($size->height == $heightAdv)) {
-                   $result[] = $adv;
-                }
-            }
-        }
+		else {
+			$directory = $this->_templateDir;
+			$file = $directory.'/layer.xml';
 
+			if (file_exists($file)) {
+				$xml = simplexml_load_file($file);
+			} 
+			else {
+				exit('Failed to open '.$file);
+			}
+	 
+			$widthAdv = $width;
+			$heightAdv = $height;
+			
+			foreach ($xml->adv as $adv) {
+				foreach($adv->sizes->size as $size) {
+					if(($size->width == $widthAdv) && ($size->height == $heightAdv)) {
+					   $result[] = $adv;
+					  
+					}
+				}
+				if($adv->name == 'toplayer') {
+					$temp[] = $adv;
+				}
+			}
+			if (!isset($result) && !empty($result)) {
+				$result = $temp;
+			}
+		}
+		
         return $result;
     }
     
@@ -195,45 +241,95 @@ class Adv {
     * 
     *
     */
-    protected function generateCode() {
-        $xmlData = $this->getTypeXML();
-        $countElements = count($xmlData);
-       
-        if($countElements) {
-            $i = 0;
-            foreach($xmlData as $data) {
-                
-                $static_arr = array('jpg', 'gif', 'png');
-                if(in_array(strtolower($this->_extension), $static_arr)) {
-                    $file = $data->static;
-                }
-                else {
-                    $file = $data->swf;
-                }
-
-                $type = $data->types->type;
-              
-                $filename = $this->_templateDir.'/'.$file;
-            
-                @$handle = fopen($filename, 'r');
-		        @$contents = fread($handle, filesize($filename));
-		        @fclose($handle);
+    protected function generateCode($width=NULL, $height=NULL, $multi = NULL) {
+		if (is_null($width) && is_null($height)) {
 		
-		        $contents = str_replace('{ADVID}', $type, $contents);
-		        $contents = str_replace('{FILE}', $this->_file, $contents);
-		        $contents = str_replace('{URL}', $this->_url, $contents);
-		        $contents = str_replace('{WIDTH}', $this->_width, $contents);
-		        $contents = str_replace('{HEIGHT}', $this->_height, $contents);
-                
-                //$result[$i]['name'] = $this->_name;
-		        $result[$i]['code'] = $contents;
-		        $i++;
-            }
-       }
-        else {
-            $result = 'Nie znaleziono szablonu';
-        }
-       
+			$xmlData = $this->getTypeXML();
+			$countElements = count($xmlData);
+		   
+			if($countElements) {
+				$i = 0;
+				foreach($xmlData as $data) {
+					
+					$static_arr = array('jpg', 'gif', 'png');
+					if(in_array(strtolower($this->_extension), $static_arr)) {
+						$file = $data->static;
+					}
+					else {
+						$file = $data->swf;
+					}
+
+					$type = $data->types->type;
+				  
+					$filename = $this->_templateDir.'/'.$file;
+				
+					@$handle = fopen($filename, 'r');
+					@$contents = fread($handle, filesize($filename));
+					@fclose($handle);
+			
+					$contents = str_replace('{ADVID}', $type, $contents);
+					$contents = str_replace('{FILE}', $this->_file, $contents);
+					$contents = str_replace('{URL}', $this->_url, $contents);
+					$contents = str_replace('{WIDTH}', $this->_width, $contents);
+					$contents = str_replace('{HEIGHT}', $this->_height, $contents);
+					
+					//$result[$i]['name'] = $this->_name;
+					$result[$i]['code'] = $contents;
+					$i++;
+				}
+		   }
+			else {
+				$result = 'Nie znaleziono szablonu';
+			}
+		}
+		else {
+			$xmlData = $this->getTypeXML($width, $height);
+			$countElements = count($xmlData);
+			
+			if($countElements) {
+				$i = 0;
+				foreach($xmlData as $data) {
+					
+					
+					$file = $data->static;
+					
+					$type = $data->types->type;
+				  
+					$filename = $this->_templateDir.'/'.$file;
+				
+					@$handle = fopen($filename, 'r');
+					@$contents = fread($handle, filesize($filename));
+					@fclose($handle);
+			
+					$contents = str_replace('{ADVID}', $type, $contents);
+					
+					$static_arr = array('jpg', 'gif', 'png');
+					if($multi != NULL) {
+						
+					}
+					else {
+						if(in_array(strtolower($this->_extension), $static_arr)) {
+							$contents = str_replace('{IMG}', $this->_file, $contents);
+							$contents = str_replace('{FILE}', '', $contents);
+						}
+						else {
+							$contents = str_replace('{FILE}', $this->_file, $contents);
+							$contents = str_replace('{IMG}', '', $contents);
+						}
+						$contents = str_replace('{URL}', $this->_url, $contents);
+						$contents = str_replace('{WIDTH}', $this->_width, $contents);
+						$contents = str_replace('{HEIGHT}', $this->_height, $contents);
+					}
+					//$result[$i]['name'] = $this->_name;
+					$result[$i]['code'] = $contents;
+					$i++;
+				}
+		   }
+			else {
+				$result = 'Nie znaleziono szablonu';
+			}
+		
+		}
         return $result;
      
     }
@@ -258,10 +354,8 @@ class Adv {
     *
     */
 	protected function validateURL($url) {
-		if (strpos($url, 'http') !== 0) {
-			$url = 'http://'.$url;
-		}
-
+		$i = 0;
+		
 		$regex = "((https?|ftp)\:\/\/)?"; // SCHEME
 		$regex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?"; // User and Pass
 		$regex .= "([a-z0-9-.]*)\.([a-z]{2,3})"; // Host or IP
@@ -270,11 +364,52 @@ class Adv {
 		$regex .= "(\?[a-z+&\$_.-][a-z0-9;:@&%=+\/\$_.-]*)?"; // GET Query
 		$regex .= "(#[a-z_.-][a-z0-9+\$_.-]*)?"; // Anchor 
 		
-		if(preg_match("/^$regex$/", $url)) {
+		if(is_array($url)) {
+			foreach($url as $testURL) {
+				if (strpos($testURL, 'http') !== 0) {
+					$testURL = 'http://'.$testURL;
+				}
+		
+				if(preg_match("/^$regex$/", $testURL)) {
+					//return $testURL;
+				} 
+				else {
+					//throw new Exception($testURL." może być niepoprawny."); 
+					echo '<div class="alert alert-warning">';
+					echo '<strong>Uwaga:</strong> URL <a href="'.$testURL.'">'.$testURL.'</a> może być niepoprawny.'."\n";
+					echo '</div>';
+					//return NULL;
+				}
+				$t[$i] = $testURL;
+				$i++;
+			}
+			return $t;
+		}
+		else {
+			if (strpos($url, 'http') !== 0) {
+				$url = 'http://'.$url;
+			}
+		
+			if(preg_match("/^$regex$/", $url)) {
+				//return $url;
+				
+			} 
+			else {
+				//throw new Exception($url." może być niepoprawny."); 
+				echo '<div class="alert alert-warning">';
+				echo '<strong>Uwaga:</strong> URL <a href="'.$url.'">'.$url.'</a> może być niepoprawny.'."\n";
+				echo '</div>';
+				//return NULL;
+			}
+			//$testURL = $url;
 			return $url;
-		} 
+		}
+		/*
+		if ($i > 2)
+			return $testURL;
 		else
-			return NULL;
+			return $t;
+		*/
 	}
 
 }

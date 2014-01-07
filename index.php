@@ -68,7 +68,6 @@ if(!empty($_POST)) {
 if(!empty($_POST)) {
     $imagesAr = explode("\n", $images);
     $urlsAr = explode("\n", $urls);
-
     $i = 0;
     
 	foreach($imagesAr as $img) {
@@ -146,6 +145,7 @@ if(!empty($adv)) {
         $name = $adv[$i]->getName();
         $id = $adv[$i]->getID();
 		$type = $adv[$i]->getType();
+		
 		//we check if object was in fact created with all variables set
 		if(!empty($name)) {
 			echo '

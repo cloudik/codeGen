@@ -19,25 +19,57 @@ class Layer extends Adv {
     
     public function __construct($file, $url) {
 		try {
-            if(is_array($file)) {
-            
-            }
 			$this->_file = $file;
-			$this->_url = $this->validate($url, 'url');
-			$temp = $this->getDetails();
-			$this->_width = $temp[0];
-			$this->_height = $temp[1];
 			$this->_name = $this->setName();
-			$this->_extension = $this->getExtension();
+            $this->_url = $this->validate($url, 'url');
+
+			if(is_array($file)) {
+				$i = 0;
+				
+				foreach($this->_file as $creative) {
+					$creative = trim($creative);
+					$temp = $this->getDetails($creative);
+					$this->_width[$i] = $temp[0];
+					$this->_height[$i] = $temp[1];
+					$this->_extension[$i] = $this->getExtension($creative);
+					$this->_type[$i] = $this->setType($this->_width[$i], $this->_height[$i]);
+					$this->_code[$i] = $this->generateCode($this->_width[$i], $this->_height[$i], $multi);
+					$i++;
+				}
+				
+            }
+			else {
+				$temp = $this->getDetails($this->_file);
+				$this->_width = $temp[0];
+				$this->_height = $temp[1];
+				$this->_extension = $this->getExtension($this->_file);
+				$this->_type = $this->setType($this->_width, $this->_height);
+				$this->_code = $this->generateCode($this->_width, $this->_height);
+			}
 			$this->_id = rand();
-			$this->_type = $this->setType();
-			$this->_code = $this->generateCode();
+			
+	
 		}
 		catch(Exception $e) {
 			echo '<div class="alert alert-danger">';
-			echo '<strong>Wyst¹pi³ b³¹d:</strong> ',  $e->getMessage(), "\n";
+			echo '<strong>WystÄ…piÅ‚ bÅ‚Ä…d:</strong> ',  $e->getMessage(), "\n";
 			echo '</div>';
 		}
 	}
+	
+	protected function setName() {
+		if(is_array($this->_file))
+			$temp = explode('/', $this->_file[0]);
+		else
+			$temp = explode('/', $this->_file);
+			
+		$i = count($temp);
+		$temp = $temp[$i-1];
+		$temp = explode('.', $temp);
+        //OAS problem with characters in creative name - change all , to .
+        str_replace(',', '.', $temp[0]);
+		return ($temp[0]);
+	}
+	
 }
 ?>
