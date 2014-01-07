@@ -22,29 +22,30 @@ class Layer extends Adv {
 			$this->_file = $file;
 			$this->_name = $this->setName();
             $this->_url = $this->validate($url, 'url');
-
+            $layer = true;
 			if(is_array($file)) {
 				$i = 0;
-				
+				$multi = true;
 				foreach($this->_file as $creative) {
 					$creative = trim($creative);
 					$temp = $this->getDetails($creative);
 					$this->_width[$i] = $temp[0];
 					$this->_height[$i] = $temp[1];
 					$this->_extension[$i] = $this->getExtension($creative);
-					$this->_type[$i] = $this->setType($this->_width[$i], $this->_height[$i]);
-					$this->_code[$i] = $this->generateCode($this->_width[$i], $this->_height[$i], $multi);
+					$this->_type[$i] = $this->setType($layer, $multi);
+					$this->_code[$i] = $this->generateCode($layer, $multi);
 					$i++;
 				}
 				
             }
 			else {
+                $multi = false;
 				$temp = $this->getDetails($this->_file);
 				$this->_width = $temp[0];
 				$this->_height = $temp[1];
 				$this->_extension = $this->getExtension($this->_file);
-				$this->_type = $this->setType($this->_width, $this->_height);
-				$this->_code = $this->generateCode($this->_width, $this->_height);
+				$this->_type = $this->setType($layer, $multi);
+				$this->_code = $this->generateCode($layer, $multi);
 			}
 			$this->_id = rand();
 			

@@ -117,12 +117,12 @@ class Adv {
     * 
     *
     */
-    protected function setType($width=NULL, $height=NULL) {
-		if (is_null($width) && is_null($height)) {
+    protected function setType($layer=NULL, $multi=NULL) {
+		if (is_null($layer) && is_null($multi)) {
 			$xmlData = $this->getTypeXML();
 		}
-		else {
-			$xmlData = $this->getTypeXML($width, $height);
+		else {    
+			$xmlData = $this->getTypeXML($layer, $multi);
 		}
         $countElements = count($xmlData);
        
@@ -142,8 +142,8 @@ class Adv {
     * 
     *
     */
-    protected function getTypeXML($width=NULL, $height=NULL) {
-		if (is_null($width) && is_null($height)) {
+    protected function getTypeXML($layer=NULL, $multi=NULL) {
+		if (is_null($layer)) {
 			$directory = $this->_templateDir;
 			$file = $directory.'/index.xml';
 
@@ -164,6 +164,9 @@ class Adv {
 					}
 				}
 			}
+            if(!empty($result)) {
+                echo 'nie znaleziono';
+            }
 		}
 		else {
 			$directory = $this->_templateDir;
@@ -175,15 +178,20 @@ class Adv {
 			else {
 				exit('Failed to open '.$file);
 			}
-	 
-			$widthAdv = $width;
-			$heightAdv = $height;
-			
+	       
+            if($multi) {
+			    $widthAdv = $this->_width[0];
+			    $heightAdv = $this->_height[0];
+			}
+            else {
+                $widthAdv = $this->_width;
+			    $heightAdv = $this->_height;
+            }
+            
 			foreach ($xml->adv as $adv) {
 				foreach($adv->sizes->size as $size) {
 					if(($size->width == $widthAdv) && ($size->height == $heightAdv)) {
 					   $result[] = $adv;
-					  
 					}
 				}
 				if($adv->name == 'toplayer') {
@@ -194,7 +202,8 @@ class Adv {
 				$result = $temp;
 			}
 		}
-		
+        if(!isset($result))
+            $result = NULL;
         return $result;
     }
     
@@ -245,8 +254,8 @@ class Adv {
     * 
     *
     */
-    protected function generateCode($width=NULL, $height=NULL, $multi = NULL) {
-		if (is_null($width) && is_null($height)) {
+    protected function generateCode($layer = NULL, $multi = NULL) {
+		if (is_null($layer) && is_null($multi)) {
 		
 			$xmlData = $this->getTypeXML();
 			$countElements = count($xmlData);
@@ -287,9 +296,9 @@ class Adv {
 			}
 		}
 		else {
-			$xmlData = $this->getTypeXML($width, $height);
+			$xmlData = $this->getTypeXML($layer, $multi);
 			$countElements = count($xmlData);
-			
+
 			if($countElements) {
 				$i = 0;
 				foreach($xmlData as $data) {
