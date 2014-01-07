@@ -69,8 +69,10 @@ class Adv {
 	}
     
     /**
-    * 
+    * Function getDetails - function returns details of file which address is provided
     *
+	* @param string $address - address of file of which we want details (such as width and height)
+	* @return array $temp array with details ([0] - width, [1] - height, [2] - weight)
     */
     protected function getDetails($address) {
 		
@@ -84,8 +86,10 @@ class Adv {
 	}
     
     /**
-    * 
+    * Function getExtension - function returns extension of file which address' is provided
     *
+	* @param string $address - address of file of which we want such detail
+	* @return string $temp[1] - extension of file
     */
     protected function getExtension($address) {
 		$temp = explode('/', $address);
@@ -99,7 +103,7 @@ class Adv {
     * 
     *
     */
-	protected function setName() {
+	protected function setName($multi = NULL) {
 		$temp = explode('/', $this->_file);
 		$i = count($temp);
 		$temp = $temp[$i-1];

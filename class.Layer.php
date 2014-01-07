@@ -57,7 +57,7 @@ class Layer extends Adv {
 		}
 	}
 	
-	protected function setName() {
+	protected function setName($multi = NULL) {
 		if(is_array($this->_file))
 			$temp = explode('/', $this->_file[0]);
 		else
