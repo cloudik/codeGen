@@ -100,8 +100,10 @@ class Adv {
 	}
 	
     /**
-    * 
+    * Function setName - function gets name of the file and sets it as variable
     *
+	* @param bool $multi - if multiple files are needed for this adv
+	* @return string $temp[0] - name of the adv
     */
 	protected function setName($multi = NULL) {
 		$temp = explode('/', $this->_file);
@@ -114,8 +116,11 @@ class Adv {
 	}
     
 	/**
-    * 
+    * Function setType - function returns name of type of advertisment (ei. billboard, toplayer)
     *
+	* @param bool $layer - campaing is layer type
+	* @param bool $multi - multiple files are needed for this adv
+	* @return string $result - name of the adv
     */
     protected function setType($layer=NULL, $multi=NULL) {
 		if (is_null($layer) && is_null($multi)) {
@@ -139,10 +144,14 @@ class Adv {
     }
     
 	/**
-    * 
+    * Function getTypeXML - returns all nodes of XML file which correspond to files used in advertisemnt
     *
+	* @param bool $layer - campaing is layer type
+	* @param bool $multi - multiple files are needed for this adv
+	* @return array $result - nodes of XML file
     */
     protected function getTypeXML($layer=NULL, $multi=NULL) {
+		//is not layer adv
 		if (is_null($layer)) {
 			$directory = $this->_templateDir;
 			$file = $directory.'/index.xml';
@@ -153,10 +162,11 @@ class Adv {
 			else {
 				exit('Failed to open '.$file);
 			}
-	 
+			//we need width and height of file to determin which node is needed
 			$widthAdv = $this->_width;
 			$heightAdv = $this->_height;
 			
+			//for each node we check the match
 			foreach ($xml->adv as $adv) {
 				foreach($adv->sizes->size as $size) {
 					if(($size->width == $widthAdv) && ($size->height == $heightAdv)) {
@@ -168,6 +178,7 @@ class Adv {
                
             }
 		}
+		//kreacja layerowa
 		else {
 			$directory = $this->_templateDir;
 			$file = $directory.'/layer.xml';
@@ -178,19 +189,28 @@ class Adv {
 			else {
 				exit('Failed to open '.$file);
 			}
-	       
+	       //if there are multipe files we decide which is billboard and potential toplayer
             if($multi) {
-			    $widthAdv = $this->_width[0];
-			    $heightAdv = $this->_height[0];
+				$bill_width = array(750, 970);
+					if(in_array($this->_width[0], $bill_width)) {
+						$widthAdv = $this->_width[0];
+						$heightAdv = $this->_height[0];
+					}		
+					else {
+						@$widthAdv = $this->_width[1];
+						@$heightAdv = $this->_height[1];
+					}
 			}
+			//if not multipe - then we just take width and height
             else {
                 $widthAdv = $this->_width;
 			    $heightAdv = $this->_height;
             }
-            
+            //for each node we check the match
 			foreach ($xml->adv as $adv) {
 				foreach($adv->sizes->size as $size) {
 					if(($size->width == $widthAdv) && ($size->height == $heightAdv)) {
+						//if multiple then numer of node <files  in XML has to be equal 2
 						if($multi) {
 							if($adv->files == 2)
 								$result[] = $adv;
@@ -202,14 +222,17 @@ class Adv {
 						}	
 					}
 				}
+				//just in case we have temp if no match is provided
 				if($adv->name == 'toplayer') {
 					$temp[] = $adv;
 				}
 			}
-			if (!isset($result) && !empty($result)) {
+			//no match - then we provide our temp
+			if (!isset($result) || empty($result)) {
 				$result = $temp;
 			}
 		}
+		
         if(!isset($result))
             $result = NULL;
 
@@ -217,7 +240,7 @@ class Adv {
     }
     
     /**
-    * function multipleAdvs function returns true if this type of creative can have more than one placement on the website
+    * Function multipleAdvs - function returns true if this type of creative can have more than one placement on the website
     *
 	* @param none
 	* @return bool
@@ -231,24 +254,28 @@ class Adv {
     }
     
 	/**
-    * 
+    * Function getName - function returns name of the advertisment
     *
+	* @return string $this->_name
     */
     public function getName() {
         return $this->_name;
     }
     
 	/**
-    * 
+    * Function getID - function returns ID of the advertisment
     *
+	* @return string $this->_id
     */
     public function getID() {
         return $this->_id;
     }
     
 	/**
-    * 
+    * Function getCode - function returns HTML code(s) of the advertisment
     *
+	* @param bool $multi - multiple files are needed for this adv
+	* @return array $this->_code
     */
     public function getCode ($multi = NULL) {
 		if($multi)
@@ -257,24 +284,21 @@ class Adv {
         return $this->_code;
     }
 	
-	public function checkFiles() {
-		if(is_array($this->_file)) 
-			return true;
-		else
-			return false;
-	}
-	
 	/**
-    * 
+    * Function getType - function returns type of the advertisment
     *
+	* @return string $this->_type
     */
 	public function getType () {
         return $this->_type;
     }
     
 	/**
-    * 
+    * Function generateCode - generates HTML code for corresponding in ads from templates from XML 
     *
+	* @param bool $layer - campaing is layer type
+	* @param bool $multi - multiple files are needed for this adv
+	* @return array $result - arrays with generates HTML codes
     */
     protected function generateCode($layer = NULL, $multi = NULL) {
 		//is not layer advertisemnt
@@ -287,22 +311,24 @@ class Adv {
 				$i = 0;
 				foreach($xmlData as $data) {
 					
+					//if is static then use <static>
 					$static_arr = array('jpg', 'gif', 'png');
 					if(in_array(strtolower($this->_extension), $static_arr)) {
 						$file = $data->static;
 					}
+					//if is not static then use <swf>
 					else {
 						$file = $data->swf;
 					}
 
 					$type = $data->types->type;
-				  
+					//get name of template from this adv
 					$filename = $this->_templateDir.'/'.$file;
 				
 					@$handle = fopen($filename, 'r');
 					@$contents = fread($handle, filesize($filename));
 					@fclose($handle);
-			
+					//change tags for values
 					$contents = str_replace('{ADVID}', $type, $contents);
 					$contents = str_replace('{FILE}', $this->_file, $contents);
 					$contents = str_replace('{URL}', $this->_url, $contents);
@@ -331,13 +357,13 @@ class Adv {
 					$file = $data->static;
 					
 					$type = $data->types->type;
-				  
+					//get name of template from this adv
 					$filename = $this->_templateDir.'/'.$file;
 				
 					@$handle = fopen($filename, 'r');
 					@$contents = fread($handle, filesize($filename));
 					@fclose($handle);
-			
+					//replace ADVID for value
 					$contents = str_replace('{ADVID}', $type, $contents);
 					
 					$static_arr = array('jpg', 'gif', 'png');
@@ -345,55 +371,61 @@ class Adv {
 					//more than 2 files for adv (billboard + toplayer)
 					if($multi != NULL) {
 						$bill_width = array(750, 970);
+						//check if 1st posted file is billboard if so replace tags for it
 						if(in_array($this->_width[0], $bill_width)) {
+							//check extentions of file and decide if IMG or FILE tag
 							if(in_array(strtolower($this->_extension[0]), $static_arr)) {
 								$contents = str_replace('{IMG}', trim($this->_file[0]), $contents);
 								$contents = str_replace('{FILE}', '', $contents);
-							}	
+							}
 							else {
 								$contents = str_replace('{FILE}', trim($this->_file[0]), $contents);
 								$contents = str_replace('{IMG}', '', $contents);
 							}
-							
+							//check extentions of toplayer
 							if(in_array(strtolower($this->_extension[1]), $static_arr)) {
-								$contents = str_replace('{IMG2}', $this->_file[1], $contents);
+								$contents = str_replace('{IMG2}', trim($this->_file[1]), $contents);
 								$contents = str_replace('{FILE2}', '', $contents);
 							}	
 							else {
-								$contents = str_replace('{FILE2}', $this->_file[1], $contents);
+								$contents = str_replace('{FILE2}', trim($this->_file[1]), $contents);
 								$contents = str_replace('{IMG2}', '', $contents);
 							}
+							//swap rest of stuff
 							$contents = str_replace('{URL}', trim($this->_url[0]), $contents);
-							$contents = str_replace('{WIDTH}', $this->_width[0], $contents);
-							$contents = str_replace('{HEIGHT}', $this->_height[0], $contents);
-							$contents = str_replace('{URL2}', $this->_url[1], $contents);
-							$contents = str_replace('{WIDTH2}', $this->_width[1], $contents);
-							$contents = str_replace('{HEIGHT2}', $this->_height[1], $contents);
+							$contents = str_replace('{WIDTH}', trim($this->_width[0]), $contents);
+							$contents = str_replace('{HEIGHT}', trim($this->_height[0]), $contents);
+							$contents = str_replace('{URL2}', trim($this->_url[1]), $contents);
+							$contents = str_replace('{WIDTH2}', trim($this->_width[1]), $contents);
+							$contents = str_replace('{HEIGHT2}', trim($this->_height[1]), $contents);
 						}
+						//2nd file is the billboard
 						else {
+							//check extentions of file and decide if IMG or FILE tag
 							if(in_array(strtolower($this->_extension[1]), $static_arr)) {
-								$contents = str_replace('{IMG}', $this->_file[1], $contents);
+								$contents = str_replace('{IMG}', trim($this->_file[1]), $contents);
 								$contents = str_replace('{FILE}', '', $contents);
 							}	
 							else {
-								$contents = str_replace('{FILE}', $this->_file[1], $contents);
+								$contents = str_replace('{FILE}', trim($this->_file[1]), $contents);
 								$contents = str_replace('{IMG}', '', $contents);
 							}
-							
+							//check extentions of toplayer
 							if(in_array(strtolower($this->_extension[0]), $static_arr)) {
-								$contents = str_replace('{IMG2}', $this->_file[0], $contents);
+								$contents = str_replace('{IMG2}', trim($this->_file[0]), $contents);
 								$contents = str_replace('{FILE2}', '', $contents);
 							}	
 							else {
-								$contents = str_replace('{FILE2}', $this->_file[0], $contents);
+								$contents = str_replace('{FILE2}', trim($this->_file[0]), $contents);
 								$contents = str_replace('{IMG2}', '', $contents);
 							}
-							$contents = str_replace('{URL}', $this->_url[1], $contents);
-							$contents = str_replace('{WIDTH}', $this->_width[1], $contents);
-							$contents = str_replace('{HEIGHT}', $this->_height[1], $contents);
-							$contents = str_replace('{URL2}', $this->_url[0], $contents);
-							$contents = str_replace('{WIDTH2}', $this->_width[0], $contents);
-							$contents = str_replace('{HEIGHT2}', $this->_height[0], $contents);
+							//swap rest of stuff
+							$contents = str_replace('{URL}', trim($this->_url[1]), $contents);
+							$contents = str_replace('{WIDTH}', trim($this->_width[1]), $contents);
+							$contents = str_replace('{HEIGHT}', trim($this->_height[1]), $contents);
+							$contents = str_replace('{URL2}', trim($this->_url[0]), $contents);
+							$contents = str_replace('{WIDTH2}', trim($this->_width[0]), $contents);
+							$contents = str_replace('{HEIGHT2}', trim($this->_height[0]), $contents);
 						}
 					}
 					//single file (toplayer, scroll or  floorAd)
@@ -416,7 +448,7 @@ class Adv {
 				}
 		   }
 			else {
-				$result = 'Nie znaleziono szablonu';
+				$result = 'Nie znaleziono szablonu kreacji layerowej';
 			}
 		
 		}
@@ -425,8 +457,11 @@ class Adv {
     }
     
     /**
-    * 
+    * Function validate - function based on value of tag redirects to proper function to validate data
     *
+	* @param string/array $data - data to be parsed
+	* @param string $tag - tag which indicates which data is to be parsed
+	* @return string/array $result - parsed and checked data
     */
 	protected function validate($data, $tag) {
 		switch($tag) {
@@ -440,8 +475,11 @@ class Adv {
 	}
 	
 	/**
-    * 
+    * Function validateURL - function validates URL (if it fits the regex), adds http:// if URL doesn't have it in the beginning 
+	* of the string; if URL does not fit the regex - function shows warning
     *
+	* @param string $url - URL to check
+	* @return string $url - corrected URL
     */
 	protected function validateURL($url) {
 		$i = 0;

@@ -82,22 +82,22 @@ if(!empty($_POST)) {
     $i = 0;
 	
 	foreach($creativeAr as $creative) {
-		
-		$creative = trim($creative);
-		$urlsAr[$i] = trim($urlsAr[$i]);
-		
-		if(strstr($creative, "\n") !== FALSE)
-			$files = explode("\n", $creative);
-		else
-			$files = $creative;
+		if(!empty($creative)) {
+			$creative = trim($creative);
+			$urlsAr[$i] = trim($urlsAr[$i]);
 			
-		if(strstr($urlsAr[$i], "\n") !== FALSE)
-			$links = explode("\n", $urlsAr[$i]);
-		else
-			$links = $urlsAr[$i];	
-		
-		$adv[$i] = new Layer($files, $links);
-		
+			if(strstr($creative, "\n") !== FALSE)
+				$files = explode("\n", $creative);
+			else
+				$files = $creative;
+				
+			if(strstr($urlsAr[$i], "\n") !== FALSE)
+				$links = explode("\n", $urlsAr[$i]);
+			else
+				$links = $urlsAr[$i];	
+			
+			$adv[$i] = new Layer($files, $links);
+		}
 		$i++;
 	/*
         $layerAr = explode("\n", $creative);
@@ -217,7 +217,7 @@ if(!empty($adv)) {
 			}
 			$j = 0;
 			echo '<div class="codetxt">';
-
+			
 			foreach($adv[$i]->getCode() as $arr) {
 				
 				echo '
