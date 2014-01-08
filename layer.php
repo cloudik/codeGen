@@ -65,12 +65,6 @@ if(!empty($_POST)) {
     @$capping = $_POST['cappingInput'];
 }
 
-function debug($i) {
-	echo '<pre>';
-	print_r($i);
-	echo '</pre>';
-}
-
 if(!empty($_POST)) {
     if(strstr($images, '<layer>')) {
         $creativeAr = explode('<layer>', $images);
@@ -101,8 +95,9 @@ if(!empty($_POST)) {
 			$links = explode("\n", $urlsAr[$i]);
 		else
 			$links = $urlsAr[$i];	
-	
+		
 		$adv[$i] = new Layer($files, $links);
+		
 		$i++;
 	/*
         $layerAr = explode("\n", $creative);
@@ -135,7 +130,6 @@ if(!empty($_POST)) {
         }
 	*/	
     }
-    
 }
  ?>
          <div class="row">
@@ -223,6 +217,7 @@ if(!empty($adv)) {
 			}
 			$j = 0;
 			echo '<div class="codetxt">';
+
 			foreach($adv[$i]->getCode() as $arr) {
 				
 				echo '

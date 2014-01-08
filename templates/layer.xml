@@ -17,6 +17,7 @@
 				<height>200</height>
 			</size>
 		</sizes>
+		<files>2</files>
 	</adv>
 	<adv>
 		<name>scrollbillboard</name>
@@ -39,6 +40,7 @@
 				<height>300</height>
 			</size>
 		</sizes>
+		<files>1</files>
 	</adv>
 	<adv>
 		<name>toplayer</name>
@@ -53,6 +55,7 @@
 				<height></height>
 			</size>
 		</sizes>
+		<files>1</files>
 	</adv>
 	<adv>
 		<name>floorAd</name>
@@ -75,5 +78,6 @@
 				<height>200</height>
 			</size>
 		</sizes>
+		<files>1</files>
 	</adv>
 </advs>

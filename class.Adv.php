@@ -79,7 +79,7 @@ class Adv {
 		if (@$temp = getimagesize($address)) {
 			return $temp;
 		} else {
-			throw new Exception($address." nie istnieje."); 
+			throw new Exception("Plik ".$address." nie istnieje."); 
 		}
 		//$temp = getimagesize($this->_file);
 		//return $temp;
@@ -165,7 +165,7 @@ class Adv {
 				}
 			}
             if(!empty($result)) {
-                echo 'nie znaleziono';
+               
             }
 		}
 		else {
@@ -191,7 +191,15 @@ class Adv {
 			foreach ($xml->adv as $adv) {
 				foreach($adv->sizes->size as $size) {
 					if(($size->width == $widthAdv) && ($size->height == $heightAdv)) {
-					   $result[] = $adv;
+						if($multi) {
+							if($adv->files == 2)
+								$result[] = $adv;
+						}
+						else {
+							//we exclude files with more 2 too files needed
+							if($adv->files == 1)
+								$result[] = $adv;
+						}	
 					}
 				}
 				if($adv->name == 'toplayer') {
@@ -204,6 +212,7 @@ class Adv {
 		}
         if(!isset($result))
             $result = NULL;
+
         return $result;
     }
     
@@ -213,8 +222,11 @@ class Adv {
 	* @param none
 	* @return bool
     */
-    public function multipleAdvs() {
-        $total = count($this->_code);
+    public function multipleAdvs($multi = NULL) {
+        if($multi) 
+			$total = 1;
+		else	
+			$total = count($this->_code);
         return $total;
     }
     
@@ -238,9 +250,19 @@ class Adv {
     * 
     *
     */
-    public function getCode () {
+    public function getCode ($multi = NULL) {
+		if($multi)
+			return $this->_code[1];
+		else	
         return $this->_code;
     }
+	
+	public function checkFiles() {
+		if(is_array($this->_file)) 
+			return true;
+		else
+			return false;
+	}
 	
 	/**
     * 
@@ -255,7 +277,8 @@ class Adv {
     *
     */
     protected function generateCode($layer = NULL, $multi = NULL) {
-		if (is_null($layer) && is_null($multi)) {
+		//is not layer advertisemnt
+		if (is_null($layer)) {
 		
 			$xmlData = $this->getTypeXML();
 			$countElements = count($xmlData);
@@ -295,10 +318,11 @@ class Adv {
 				$result = 'Nie znaleziono szablonu';
 			}
 		}
+		//is layer advertisemnt
 		else {
 			$xmlData = $this->getTypeXML($layer, $multi);
 			$countElements = count($xmlData);
-
+			
 			if($countElements) {
 				$i = 0;
 				foreach($xmlData as $data) {
@@ -317,9 +341,62 @@ class Adv {
 					$contents = str_replace('{ADVID}', $type, $contents);
 					
 					$static_arr = array('jpg', 'gif', 'png');
+					
+					//more than 2 files for adv (billboard + toplayer)
 					if($multi != NULL) {
-						
+						$bill_width = array(750, 970);
+						if(in_array($this->_width[0], $bill_width)) {
+							if(in_array(strtolower($this->_extension[0]), $static_arr)) {
+								$contents = str_replace('{IMG}', trim($this->_file[0]), $contents);
+								$contents = str_replace('{FILE}', '', $contents);
+							}	
+							else {
+								$contents = str_replace('{FILE}', trim($this->_file[0]), $contents);
+								$contents = str_replace('{IMG}', '', $contents);
+							}
+							
+							if(in_array(strtolower($this->_extension[1]), $static_arr)) {
+								$contents = str_replace('{IMG2}', $this->_file[1], $contents);
+								$contents = str_replace('{FILE2}', '', $contents);
+							}	
+							else {
+								$contents = str_replace('{FILE2}', $this->_file[1], $contents);
+								$contents = str_replace('{IMG2}', '', $contents);
+							}
+							$contents = str_replace('{URL}', trim($this->_url[0]), $contents);
+							$contents = str_replace('{WIDTH}', $this->_width[0], $contents);
+							$contents = str_replace('{HEIGHT}', $this->_height[0], $contents);
+							$contents = str_replace('{URL2}', $this->_url[1], $contents);
+							$contents = str_replace('{WIDTH2}', $this->_width[1], $contents);
+							$contents = str_replace('{HEIGHT2}', $this->_height[1], $contents);
+						}
+						else {
+							if(in_array(strtolower($this->_extension[1]), $static_arr)) {
+								$contents = str_replace('{IMG}', $this->_file[1], $contents);
+								$contents = str_replace('{FILE}', '', $contents);
+							}	
+							else {
+								$contents = str_replace('{FILE}', $this->_file[1], $contents);
+								$contents = str_replace('{IMG}', '', $contents);
+							}
+							
+							if(in_array(strtolower($this->_extension[0]), $static_arr)) {
+								$contents = str_replace('{IMG2}', $this->_file[0], $contents);
+								$contents = str_replace('{FILE2}', '', $contents);
+							}	
+							else {
+								$contents = str_replace('{FILE2}', $this->_file[0], $contents);
+								$contents = str_replace('{IMG2}', '', $contents);
+							}
+							$contents = str_replace('{URL}', $this->_url[1], $contents);
+							$contents = str_replace('{WIDTH}', $this->_width[1], $contents);
+							$contents = str_replace('{HEIGHT}', $this->_height[1], $contents);
+							$contents = str_replace('{URL2}', $this->_url[0], $contents);
+							$contents = str_replace('{WIDTH2}', $this->_width[0], $contents);
+							$contents = str_replace('{HEIGHT2}', $this->_height[0], $contents);
+						}
 					}
+					//single file (toplayer, scroll or  floorAd)
 					else {
 						if(in_array(strtolower($this->_extension), $static_arr)) {
 							$contents = str_replace('{IMG}', $this->_file, $contents);
@@ -382,7 +459,7 @@ class Adv {
 				if (strpos($testURL, 'http') !== 0) {
 					$testURL = 'http://'.$testURL;
 				}
-		
+				$testURL = trim($testURL);
 				if(preg_match("/^$regex$/", $testURL)) {
 					//return $testURL;
 				} 

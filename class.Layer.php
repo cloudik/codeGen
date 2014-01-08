@@ -33,9 +33,10 @@ class Layer extends Adv {
 					$this->_height[$i] = $temp[1];
 					$this->_extension[$i] = $this->getExtension($creative);
 					$this->_type[$i] = $this->setType($layer, $multi);
-					$this->_code[$i] = $this->generateCode($layer, $multi);
+					
 					$i++;
 				}
+				$this->_code = $this->generateCode($layer, $multi);
 				
             }
 			else {
